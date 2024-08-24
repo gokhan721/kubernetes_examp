@@ -1,0 +1,50 @@
+Container Deployment Era
+
+Utilities and standard interfaces to address:
+- Efficient scheduling across instances
+- Health checks
+- Service discovery
+- Configuration management
+- Autoscaling
+- Persisten storage
+- Networking
+
+Borg(Google) -> k8s
+
+K8s System Architecture
+
+Cluster comprised of control plane and data plane
+
+1-) Control Plane consist of multiple control plane nodes where all the system components run
+
+2-) Data Plane consist of multiple worker nodes on which end user applications run
+
+
+
+Control Plane Node Componentes:
+
+1-) Cloud Controller Manager: component that embeds cloud-specific control logic. The cloud controller manager lets you link your cluster into your cloud provider's API, and separates out the components that interact with that cloud platform from components that only interact with your cluster.
+2-) Controller Manager:  is a control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state
+3-) API:  exposes an HTTP API that lets end users, different parts of your cluster, and external components communicate with one another. The Kubernetes API lets you query and manipulate the state of API objects in Kubernetes (for example: Pods, Namespaces, ConfigMaps, and Events). Most operations can be performed through the kubectl command-line interface or other command-line tools, such as kubeadm, which in turn use the API. However, you can also access the API directly using REST calls. Kubernetes provides a set of client libraries for those looking to write applications using the Kubernetes API.
+4-) etcd: Distributed key-value data storage info about all of the resources about components.
+5-) Sched: Assign pods to new worker nodes based on their current usage. When defined a workload for k8s the resource such as CPU, memory etc can be specified. The scheduler look at the set of nodes available and which one would make the best fit based on available resources.
+
+Data Plane Worker Node Components:
+
+1-) Kubelet: Component responsible spawn and manage the workloads. Also performs health checks and relays these info back to the API server on control plane
+2-) k-proxy: Responsible for setting up and maintaining the networking btw the diff networks. For example, Set up rules within IP tables to sure that the workloads can communicate based on how they are set up the conf.
+
+
+Note: Many cloud provider have hosted or managed  clusters that hide most of this complexity and provide us with access to that K8s API server and we're able to consume this API to deploy our apps without having to get into nitty-gritty of all above system components.
+
+
+K8s Standard Interfaces
+
+1-) Container Runtime Interface (CRI) -> a plugin interface which enables the kubelet to use a wide variety of container runtimes, without having a need to recompile the cluster components (containerd (*) || cri-o)
+2-) Container Network Interface (CNI) -> Defines how network should be set up for containers that are running within k8s. (Cloud specific: Aws VPC CNI, acure cni, google cloud cni or cilium(ebpf to eliminate k-proxy and manage networking on kernel level)-calico-flannel)
+3-) Container Storage Interface (CSI) -> Define durable persistent storage to containers (Cert manager CSI Driver, Secrets Store CSI Driver or Cloud specific CSI Driver like Amazon EBS CSI Driver, Compute Engine persistent disk CSI Driver, Azure Disk Container CSI driver)
+
+Defining these interfaces allows for a modular system where innocation can happen outside of the main K8s project and be easilt "plugged in" or swapped to achieve new functionality.
+
+
+https://landscape.cncf.io => k8s project in cloud native computing foundation
